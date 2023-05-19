@@ -16,7 +16,7 @@ public class RegisterFile {
         for (int i = 1 ;i < registers.length; i++) {
             registers[i] = new Register("R" + i, 0);
         }
-        pc = new PCRegister("PC", 0);
+        pc = new PCRegister();
     }
 /// Singelton Design Pattern
     public static RegisterFile getRegisterFile() {

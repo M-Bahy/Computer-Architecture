@@ -5,8 +5,8 @@ import src.Exceptions.IncorrectRegisterValue;
 
 public class PCRegister extends Register{
 
-    public PCRegister(String name, int data) {
-        super("PC", data);
+    public PCRegister() {
+        super("PC", 0);
         //TODO Auto-generated constructor stub
     }
 
