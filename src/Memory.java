@@ -9,7 +9,7 @@ public class Memory {
 
     //printing the memory
     public void printMemory(){
-        for (int i = 0; i < memory.length; i++) {
+        for (int i = 0; i < 100; i++) {
             System.out.println("Memory Location "+ i + " has the value: " + memory[i]);
         }
     }

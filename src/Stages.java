@@ -47,13 +47,13 @@ public class Stages
     // static boolean writeBackFlag = false; //false = no writeBack required
     
   
-    static Queue<String> DXEX;
-    static Queue<String> EXMEM;
-    static Queue<String> MEMWB;
+    static Queue<String> DXEX = new LinkedList<String>();
+    static Queue<String> EXMEM = new LinkedList<String>();
+    static Queue<String> MEMWB = new LinkedList<String>();
 
     public static String fetch() throws AddressOutOfBounds, IncorrectRegisterValue 
     {
-        if(RegisterFile.getRegisterFile().getPCRegister().getData() == 1024 || CPU.m.memory[RegisterFile.getRegisterFile().getPCRegister().getData()].equals(""))
+        if(RegisterFile.getRegisterFile().getPCRegister().getData() == 1024 || CPU.m.memory[RegisterFile.getRegisterFile().getPCRegister().getData()] == null)
             return "";
         instruction = CPU.m.memory[RegisterFile.getRegisterFile().getPCRegister().getData()];
         RegisterFile.getRegisterFile().getPCRegister().incrementPC();
@@ -69,9 +69,9 @@ public class Stages
         String shamt = instruction.substring(19);
         String imm = instruction.substring(14);
         String jumpAddress = instruction.substring(4);
-        int r1 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r1Address)).getData();
-        int r2 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r2Address)).getData();
-        int r3 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r3Address)).getData();
+        int r1 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r1Address,2)).getData();
+        int r2 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r2Address,2)).getData();
+        int r3 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r3Address,2)).getData();
         DXEX.add(opcode);
         DXEX.add(r1Address);
         DXEX.add(r2Address);
@@ -203,6 +203,10 @@ public class Stages
         if(loadStoreFlag == -1)
         {
             //flag is true, this memory operation is a load
+            if(CPU.m.memory[memoryAddress] == null)
+               return;
+        
+
             resultant =  Integer.parseInt(CPU.m.memory[memoryAddress]);
         }
         else if(loadStoreFlag == 1)
@@ -220,6 +224,8 @@ public class Stages
 
     public static void writeBack() throws AddressOutOfBounds, IncorrectRegisterValue, NumberFormatException, NonExistingRegister
     {
+        if(MEMWB.isEmpty())
+            return;
         int r1Address = Integer.parseInt(MEMWB.remove());
         int resultant = Integer.parseInt(MEMWB.remove());
         boolean flag = Boolean.parseBoolean(MEMWB.remove());
@@ -230,6 +236,7 @@ public class Stages
            RegisterFile.getRegisterFile().getRegister(r1Address).setData(resultant);
            System.out.println("The value of register " + "R"+r1Address + " has been changed from " + oldValue + " to " + resultant);
         }
+        System.out.println("I am in write back method testing "+RegisterFile.getRegisterFile().getRegister(1).getData());
     }
 
     public static Integer convertBinaryToDecimal(Integer binaryNumber) 

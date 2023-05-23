@@ -258,7 +258,8 @@ public static String getRegisterBinary(String string){
 
     public static void startRunning() throws NumberFormatException, NonExistingRegister, AddressOutOfBounds, IncorrectRegisterValue
     {
-
+  
+        System.out.println("I am in start Running");
         String theNextInstructionToBeDecoded = "";
         String theNextInstructionToBeExecuted = "";
         String theNextInstructionToUseMemory = "";
@@ -267,19 +268,26 @@ public static String getRegisterBinary(String string){
         int executeCounter = 0;
         int limit = 7 + ((instructionPointer) * 2);
         for(;clockCycle<=limit;clockCycle++){
+            if(clockCycle == 11){
+                System.out.println("safwat gad3");
+            }
           if(clockCycle % 2 == 1){
-           // theNextInstructionToBeDecoded =  Stages.fetch();
+            theNextInstructionToBeDecoded =  Stages.fetch();
           }
-          
+          if(clockCycle == 4){
+            System.out.println("lol");
+          }
          if(clockCycle> 1 && !(theNextInstructionToBeDecoded .equals( ""))){
             if(decodeCounter == 0)
                 decodeCounter+=1;
             else
             {
+                
                 Stages.decode(theNextInstructionToBeDecoded);
                 theNextInstructionToBeExecuted = theNextInstructionToBeDecoded;
                 theNextInstructionToBeDecoded ="";
                 decodeCounter = 0;
+                
             }
          }
          if(clockCycle > 3 && !(theNextInstructionToBeExecuted.equals(""))){
@@ -362,6 +370,7 @@ public static void main(String[]args) throws FileNotFoundException, IOException,
 
 // long x =5 ;
 // int y = (int)x;
-
+CPU c = new CPU();
+c.executeProgram("theFile.txt");
 }
 }
