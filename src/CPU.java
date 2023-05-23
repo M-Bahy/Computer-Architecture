@@ -9,15 +9,15 @@ import java.util.Arrays;
 import src.Exceptions.NonExistingRegister;
 
 public class CPU {
-     int instructionPointer;
-    Memory m;
+    static  int instructionPointer;
+    static Memory m;
     public CPU(){
         instructionPointer = 0;
          m= new Memory();
        
     }
 
-    public void readFile(String program) throws FileNotFoundException , IOException {
+    public static  void readFile(String program) throws FileNotFoundException , IOException {
 
         BufferedReader reader = new BufferedReader(new FileReader(program));
         String line="";
@@ -35,7 +35,7 @@ public class CPU {
 
 
 
-    public  void convertToBinary(String[] input) {
+    public static  void convertToBinary(String[] input) {
 
        
 
@@ -76,7 +76,7 @@ public class CPU {
                 result += signExtendBinary(tmp, 18, true);
             }
             else{
-                result += signExtendBinary(Integer.toBinaryString(Integer.parseInt(input[3])), 18, false);
+                result += signExtendBinary(Integer.toBinaryString(Integer.parseInt(input[2])), 18, false);
                }
             m.memory[instructionPointer] = result;
             instructionPointer++;
@@ -229,8 +229,7 @@ public static String getRegisterBinary(String string){
         System.out.println(c.m.memory[1].length());
         System.out.println(c.m.memory[2]);
         System.out.println(c.m.memory[2].length());
-        System.out.println(c.m.memory[3]);
-        System.out.println(c.m.memory[3].length());
+       
         // int x = -5;
         // System.out.println(Integer.toBinaryString(x));
         // System.out.println(Integer.toBinaryString(x));
