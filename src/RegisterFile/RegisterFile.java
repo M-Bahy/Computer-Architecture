@@ -11,15 +11,20 @@ public class RegisterFile {
     private static RegisterFile registerFile = new RegisterFile();
 
     private RegisterFile() {
+        
         registers = new Register[32];
         registers[0] = new ZeroRegister();
         for (int i = 1 ;i < registers.length; i++) {
             registers[i] = new Register("R" + i, 0);
         }
         pc = new PCRegister();
+    
     }
 /// Singelton Design Pattern
     public static RegisterFile getRegisterFile() {
+        if(registerFile == null){
+            registerFile = new RegisterFile();
+        }
         return registerFile;
     }
 
@@ -44,6 +49,8 @@ public class RegisterFile {
         return this.registers;
     }
 
+
+    
 
 
 
