@@ -69,9 +69,9 @@ public class Stages
         String shamt = instruction.substring(19);
         String imm = instruction.substring(14);
         String jumpAddress = instruction.substring(4);
-        int r1 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r1Address,2)).getData();
-        int r2 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r2Address,2)).getData();
-        int r3 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r3Address,2)).getData();
+        // int r1 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r1Address,2)).getData();
+        // int r2 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r2Address,2)).getData();
+        // int r3 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r3Address,2)).getData();
         DXEX.add(opcode);
         DXEX.add(r1Address);
         DXEX.add(r2Address);
@@ -79,13 +79,14 @@ public class Stages
         DXEX.add(shamt);
         DXEX.add(imm);
         DXEX.add(jumpAddress);
-        DXEX.add(r1+"");
-        DXEX.add(r2+"");
-        DXEX.add(r3+"");
+        // DXEX.add(r1+"");
+        // DXEX.add(r2+"");
+        // DXEX.add(r3+"");
         
+            
     }
 
-    public static void execute() throws NumberFormatException, AddressOutOfBounds, IncorrectRegisterValue 
+    public static void execute() throws NumberFormatException, AddressOutOfBounds, IncorrectRegisterValue, NonExistingRegister 
     {
         String opcode = DXEX.remove();
         String r1Address = DXEX.remove();
@@ -94,9 +95,12 @@ public class Stages
         String shamt = DXEX.remove();
         String imm = DXEX.remove();
         String jumpAddress = DXEX.remove();
-        int r1 = Integer.parseInt(DXEX.remove());
-        int r2 = Integer.parseInt(DXEX.remove());
-        int r3 = Integer.parseInt(DXEX.remove());
+        // int r1 = Integer.parseInt(DXEX.remove());
+        // int r2 = Integer.parseInt(DXEX.remove());
+        // int r3 = Integer.parseInt(DXEX.remove());
+        int r1 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r1Address,2)).getData();
+        int r2 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r2Address,2)).getData();
+        int r3 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r3Address,2)).getData();
         int resultant = 0;
         int loadStoreFlag = 0;
         int memoryAddress = 0;
@@ -194,11 +198,11 @@ public class Stages
 
     public static void memory()
     {
-        int r1Address = Integer.parseInt(EXMEM.remove());
+        int r1Address = Integer.parseInt(EXMEM.remove(),2);
         int resultant = Integer.parseInt(EXMEM.remove());
         boolean writeBackFlag = Boolean.parseBoolean(EXMEM.remove());
          int toBeStored = Integer.parseInt(EXMEM.remove());
-        int memoryAddress = Integer.parseInt(EXMEM.remove());
+        int memoryAddress = Integer.parseInt(EXMEM.remove(),2);
         int loadStoreFlag = Integer.parseInt(EXMEM.remove());
         if(loadStoreFlag == -1)
         {

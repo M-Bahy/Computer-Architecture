@@ -9,6 +9,7 @@ import java.util.Arrays;
 import src.Exceptions.AddressOutOfBounds;
 import src.Exceptions.IncorrectRegisterValue;
 import src.Exceptions.NonExistingRegister;
+import src.RegisterFile.Register;
 import src.RegisterFile.RegisterFile;
 
 public class CPU {
@@ -259,6 +260,8 @@ public static String getRegisterBinary(String string){
     public static void startRunning() throws NumberFormatException, NonExistingRegister, AddressOutOfBounds, IncorrectRegisterValue
     {
   
+
+        
         System.out.println("I am in start Running");
         String theNextInstructionToBeDecoded = "";
         String theNextInstructionToBeExecuted = "";
@@ -266,9 +269,9 @@ public static String getRegisterBinary(String string){
         String theNextInstructionToBeWrittenBack = "";
         int decodeCounter = 0;
         int executeCounter = 0;
-        int limit = 7 + ((instructionPointer) * 2);
+        int limit = 7 + ((instructionPointer-1) * 2);
         for(;clockCycle<=limit;clockCycle++){
-            if(clockCycle == 11){
+            if(clockCycle == 12){
                 System.out.println("safwat gad3");
             }
           if(clockCycle % 2 == 1){
@@ -277,43 +280,49 @@ public static String getRegisterBinary(String string){
           if(clockCycle == 4){
             System.out.println("lol");
           }
-         if(clockCycle> 1 && !(theNextInstructionToBeDecoded .equals( ""))){
-            if(decodeCounter == 0)
-                decodeCounter+=1;
+         if(clockCycle> 1  ){
+            if(decodeCounter == 1)
+                decodeCounter = 0;
             else
             {
-                
+                if (!(theNextInstructionToBeDecoded .equals( ""))){
                 Stages.decode(theNextInstructionToBeDecoded);
                 theNextInstructionToBeExecuted = theNextInstructionToBeDecoded;
                 theNextInstructionToBeDecoded ="";
-                decodeCounter = 0;
-                
+                decodeCounter = 1;
+                }
             }
          }
-         if(clockCycle > 3 && !(theNextInstructionToBeExecuted.equals(""))){
-            if(executeCounter == 0)
-                executeCounter+=1;
+         if(clockCycle > 3 ){
+            if(executeCounter == 1)
+                executeCounter = 0;
             else
             {
+                if(!(theNextInstructionToBeExecuted.equals(""))){
                 Stages.execute();
                 theNextInstructionToUseMemory = theNextInstructionToBeExecuted;
                 theNextInstructionToBeExecuted = "";
-                executeCounter = 0;
+                executeCounter = 1;
+                }
             }
          }
-         if(clockCycle > 5 && !(theNextInstructionToUseMemory.equals(""))){
+         if(clockCycle > 5 ){
             if(clockCycle % 2 == 0)
             {
+                if(!(theNextInstructionToUseMemory.equals(""))){
                 Stages.memory();
                 theNextInstructionToBeWrittenBack = theNextInstructionToUseMemory;
                 theNextInstructionToUseMemory = "";
+                }
             }
          }
-         if(clockCycle > 6 && !(theNextInstructionToBeWrittenBack.equals(""))){
+         if(clockCycle > 6){
             if(clockCycle % 2 == 1)
             {
+                if(!(theNextInstructionToBeWrittenBack.equals(""))){
                 Stages.writeBack();
                 theNextInstructionToBeWrittenBack = "";
+                }
             }
          }
          System.out.println("The current clock cycle is: "+clockCycle);
@@ -372,5 +381,12 @@ public static void main(String[]args) throws FileNotFoundException, IOException,
 // int y = (int)x;
 CPU c = new CPU();
 c.executeProgram("theFile.txt");
+
+// Register R = RegisterFile.getRegisterFile().getRegister(1);
+// R.setData(25);
+
+// System.out.println(R.getData());
+// System.out.println(RegisterFile.getRegisterFile().getRegister(1).getData());
+// }
 }
 }
