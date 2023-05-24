@@ -55,7 +55,6 @@ public class Stages
     {
         if(RegisterFile.getRegisterFile().getPCRegister().getData() == 1024 || CPU.m.memory[RegisterFile.getRegisterFile().getPCRegister().getData()] == null)
             return "";
-        CPU.m.printMemory();
         instruction = CPU.m.memory[RegisterFile.getRegisterFile().getPCRegister().getData()];
         RegisterFile.getRegisterFile().getPCRegister().incrementPC();
         System.out.println("The current instruction being fetched is: "+ instruction);
