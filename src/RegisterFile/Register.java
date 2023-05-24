@@ -37,7 +37,7 @@ public int getData() {
 
 public void setData(int data) throws AddressOutOfBounds, IncorrectRegisterValue {
     if(this instanceof PCRegister){
-        if(data < 0 || data > 255){
+        if(data < 0 || data > 1024){
             throw new AddressOutOfBounds();
         }   
         else

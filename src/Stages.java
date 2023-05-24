@@ -55,13 +55,18 @@ public class Stages
     {
         if(RegisterFile.getRegisterFile().getPCRegister().getData() == 1024 || CPU.m.memory[RegisterFile.getRegisterFile().getPCRegister().getData()] == null)
             return "";
+        CPU.m.printMemory();
         instruction = CPU.m.memory[RegisterFile.getRegisterFile().getPCRegister().getData()];
         RegisterFile.getRegisterFile().getPCRegister().incrementPC();
+        System.out.println("The current instruction being fetched is: "+ instruction);
         return instruction;
     }
     
     public static void decode(String instruction) throws NumberFormatException, NonExistingRegister 
     {
+        if(instruction.equals(""))
+            return;
+        System.out.println("The current instruction being decoded is: "+ instruction);
         String opcode = instruction.substring(0, 4);
         String r1Address = instruction.substring(4, 9);
         String r2Address = instruction.substring(9, 14);
@@ -88,6 +93,8 @@ public class Stages
 
     public static void execute() throws NumberFormatException, AddressOutOfBounds, IncorrectRegisterValue, NonExistingRegister 
     {
+        if(DXEX.isEmpty())
+            return;
         String opcode = DXEX.remove();
         String r1Address = DXEX.remove();
         String r2Address = DXEX.remove();
@@ -114,78 +121,180 @@ public class Stages
             case 0: //Add: R1 = R2+R3
                 resultant = r2 + r3;
                 writeBackFlag = true;
+                System.out.println("The current instruction being executed is ADD: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " + R" + Integer.parseInt(r3Address,2));
                 break;
 
             case 1: //Sub: R1 = R2-R3
                 resultant = r2 - r3;
                 writeBackFlag = true;
+                System.out.println("The current instruction being executed is SUB: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " - R" + Integer.parseInt(r3Address,2));
                 break;
 
             case 2: //Mul: R1 = R2*R3
                 resultant = r2 * r3;
                 writeBackFlag = true;
+                System.out.println("The current instruction being executed is MUL: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " * R" + Integer.parseInt(r3Address,2));
                 break;
 
             case 3: //Movi: R1 = IMM (R2 will be 0)
-                resultant = Integer.parseInt(imm,2);
+                
                 writeBackFlag = true;
+                System.out.println("The current instruction being executed is MOVI: R" + Integer.parseInt(r1Address,2) + " = IMM");
+
+                char c = imm.charAt(0);
+                int  n = 0;
+                if(c == '1'){
+            
+                int len = imm.length();
+                
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < len; i++) { 
+                     c = imm.charAt(i);
+                   char f = c == '0' ? '1' : '0'; 
+                  sb.append(f);
+                  n = Integer.parseInt(sb.toString(), 2);
+                  n= n+1;
+                }
+                
+               // System.out.println("The output : "+n);
+                }
+                resultant = n == 0? Integer.parseInt(imm,2) : n*-1;
                 break;
 
             case 4: //Jump if equal: IF(R1 == R2) {PC = PC+1+IMM }
                 if(r1 == r2)
                     RegisterFile.getRegisterFile().getPCRegister().setData(RegisterFile.getRegisterFile().getPCRegister().getData() + 1 + Integer.parseInt(imm,2));
-                writeBackFlag = false; 
+                writeBackFlag = false;
+                System.out.println("The current instruction being executed is JUMP IF EQUAL: if(R" + Integer.parseInt(r1Address,2) + " == R" +Integer.parseInt(r2Address,2) + ") {PC = PC + 1 + IMM}"); 
                 break;
 
             case 5: //AND: R1 = R2 & R3
                 resultant = r2 & r3;
                 writeBackFlag = true;
+                System.out.println("The current instruction being executed is AND: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " & R" + Integer.parseInt(r3Address,2));
                 break;
 
             case 6: //XORi: R1 = R2 XOR IMM
-                resultant = r2 ^ Integer.parseInt(imm,2);
+
+               c = imm.charAt(0);
+                n = 0;
+                if(c == '1'){
+            
+                int len = imm.length();
+                
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < len; i++) { 
+                     c = imm.charAt(i);
+                   char f = c == '0' ? '1' : '0'; 
+                  sb.append(f);
+                  n = Integer.parseInt(sb.toString(), 2);
+                  n= n+1;
+                }
+                
+               // System.out.println("The output : "+n);
+                }
+                resultant = n == 0? Integer.parseInt(imm,2) : n*-1;
+
+
+
+                resultant = r2 ^ resultant;
                 writeBackFlag = true;
+                System.out.println("The current instruction being executed is XORi: R" +Integer.parseInt(r1Address) + " = " + "R"+ Integer.parseInt(r2Address) + " XOR IMM");
                 break;
 
             case 7: //Jump: PC = PC[31:28] || ADDRESS
-                //int t = RegisterFile.getRegisterFile().getPCRegister().getData() & 0b11110000000000000000000000000000;
-                //RegisterFile.getRegisterFile().getPCRegister().setData(t | Integer.parseInt(jumpAddress,2));
                 int t = RegisterFile.getRegisterFile().getPCRegister().getData() & 0b11110000000000000000000000000000;
                 t = t >>> 28;
                 String ye = Integer.toBinaryString(t);
-                RegisterFile.getRegisterFile().getPCRegister().setData(Integer.parseInt(ye + jumpAddress));
+                System.out.println(ye + jumpAddress);
+                System.out.println(Integer.parseInt(ye + jumpAddress,2));
+                RegisterFile.getRegisterFile().getPCRegister().setData(Integer.parseInt(ye + jumpAddress,2)-1);
                 writeBackFlag = false;
+                DXEX.clear();
+                System.out.println("The current instruction being executed is JUMP: PC = PC[31:28] || ADDRESS");
                 break;
 
             case 8: //Shift left: R1 = R2 << SHAMT
                 resultant = r2 << Integer.parseInt(shamt,2);
                 writeBackFlag = true;
+                System.out.println("The current instruction being executed is SHIFT LEFT: R" + Integer.parseInt(r1Address)  + " = " + "R"+ Integer.parseInt(r2Address) + " << SHAMT");
                 break;
 
             case 9: //Shift right: R1 = R2 >>> SHAMT
                 resultant = r2 >> Integer.parseInt(shamt,2);
                 writeBackFlag = true;
+                System.out.println("The current instruction being executed is SHIFT RIGHT: R" + Integer.parseInt(r1Address)  + " = " + "R"+ Integer.parseInt(r2Address) + " >>> SHAMT");
                 break;
 
             case 10: //Move to register: R1 = MEM[R2 + IMM]
-                memoryAddress = r2+Integer.parseInt(imm,2);
+              c = imm.charAt(0);
+                n = 0;
+                if(c == '1'){
+            
+                int len = imm.length();
+                
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < len; i++) { 
+                     c = imm.charAt(i);
+                   char f = c == '0' ? '1' : '0'; 
+                  sb.append(f);
+                  n = Integer.parseInt(sb.toString(), 2);
+                  n= n+1;
+                }
+                
+               // System.out.println("The output : "+n);
+                }
+                resultant = n == 0? Integer.parseInt(imm,2) : n*-1;
+                memoryAddress = r2+resultant;
                 if(memoryAddress < 1024 || memoryAddress > 2047)
                     throw new AddressOutOfBounds("Memory Address invalid.");
                 toBeStored = -1;
                 loadStoreFlag = -1;
                 writeBackFlag = true;
+                System.out.println("The current instruction being executed is LOAD: R" + Integer.parseInt(r1Address) + " = MEM[" + "R"+Integer.parseInt(r2Address) + " + IMM]");
                 break;
 
             case 11: //Move to memory: MEM[R2 + IMM] = R1
-                memoryAddress = r2 + Integer.parseInt(imm,2);
+
+                 c = imm.charAt(0);
+                n = 0;
+                if(c == '1'){
+            
+                int len = imm.length();
+                
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < len; i++) { 
+                     c = imm.charAt(i);
+                   char f = c == '0' ? '1' : '0'; 
+                  sb.append(f);
+                  n = Integer.parseInt(sb.toString(), 2);
+                  n= n+1;
+                }
+                
+               // System.out.println("The output : "+n);
+                }
+                resultant = n == 0? Integer.parseInt(imm,2) : n*-1;
+
+
+
+
+
+
+
+
+
+
+                memoryAddress = r2 + resultant;
                 if(memoryAddress < 1024 || memoryAddress > 2047)
                      throw new AddressOutOfBounds("Memory Address invalid.");
                 toBeStored = r1;
                 loadStoreFlag = 1;
                 writeBackFlag = false;
+                System.out.println("The current instruction being executed is STORE: MEM[R" + Integer.parseInt(r2Address) + " + IMM] = " + "R"+ Integer.parseInt(r1Address));
                 break;
         }
         EXMEM.add(r1Address);
+        EXMEM.add(r2Address);
         EXMEM.add(resultant+"");
         EXMEM.add(writeBackFlag+"");
         EXMEM.add(toBeStored+"");
@@ -197,12 +306,16 @@ public class Stages
     }
 
     public static void memory()
+    
     {
+        if(EXMEM.isEmpty())
+            return;
         int r1Address = Integer.parseInt(EXMEM.remove(),2);
+        int r2Address = Integer.parseInt(EXMEM.remove(),2);
         int resultant = Integer.parseInt(EXMEM.remove());
         boolean writeBackFlag = Boolean.parseBoolean(EXMEM.remove());
          int toBeStored = Integer.parseInt(EXMEM.remove());
-        int memoryAddress = Integer.parseInt(EXMEM.remove(),2);
+        int memoryAddress = Integer.parseInt(EXMEM.remove());
         int loadStoreFlag = Integer.parseInt(EXMEM.remove());
         if(loadStoreFlag == -1)
         {
@@ -212,11 +325,13 @@ public class Stages
         
 
             resultant =  Integer.parseInt(CPU.m.memory[memoryAddress]);
+            System.out.println("The current instruction being executed is LOAD: R" + r1Address + " = MEM[" + "R"+ r2Address + " + IMM]");
         }
         else if(loadStoreFlag == 1)
         {
             String  oldValue = CPU.m.memory[memoryAddress];
             CPU.m.memory[memoryAddress] = toBeStored+"";
+            System.out.println("The current instruction being executed is STORE: MEM[R" + r2Address + " + IMM] = " + "R"+ r1Address);
             System.out.println("The value of data memory location " + memoryAddress + " has been changed from " + oldValue + " to " + toBeStored);
         }
         MEMWB.add(r1Address+"");
@@ -240,7 +355,7 @@ public class Stages
            RegisterFile.getRegisterFile().getRegister(r1Address).setData(resultant);
            System.out.println("The value of register " + "R"+r1Address + " has been changed from " + oldValue + " to " + resultant);
         }
-        System.out.println("I am in write back method testing "+RegisterFile.getRegisterFile().getRegister(1).getData());
+        //System.out.println("I am in write back method testing "+RegisterFile.getRegisterFile().getRegister(1).getData());
     }
 
     public static Integer convertBinaryToDecimal(Integer binaryNumber) 
@@ -331,7 +446,23 @@ public class Stages
         // System.out.println(s.substring(0, 1));
     //}
 
-
+    public static String toBinaryTwoComplement(int num) {
+        // Determine the number of bits needed to represent the number
+        int bits = 32 - Integer.numberOfLeadingZeros(Math.abs(num));
+        
+        // Get the two's complement representation of the number
+        int complement = (1 << bits) - Math.abs(num);
+        
+        // Convert the complement to a binary string
+        String binary = Integer.toBinaryString(complement);
+        
+        // Pad the binary string with leading zeros if necessary
+        while (binary.length() < bits) {
+            binary = "0" + binary;
+        }
+        
+        return binary;
+    }
 
     public static void main(String[]args){
         Queue<String> instructions = new LinkedList<String>();
