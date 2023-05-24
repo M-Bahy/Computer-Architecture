@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Arrays;
 
 import src.Exceptions.AddressOutOfBounds;
@@ -52,6 +53,7 @@ public class CPU {
 
 
         String result = "";
+   
         int r = identifyNoOfIterations(input[0]);
       
 
@@ -82,6 +84,16 @@ public class CPU {
             result+=getRegisterBinary(input[1])+"00000";
             if(Integer.parseInt(input[2]) < 0){
                 String tmp = toBinaryTwoComplement(Integer.parseInt(input[2].substring(1)));
+                // int x = Integer.parseInt(input[2].substring(1));
+                // // int x = Integer.parseInt(input[2]);
+                // // x = x*-1;
+                // // String tmp = toBinaryTwoComplement(x);
+                // System.out.println("Look Here : "+Integer.parseInt(toBinaryTwoComplement(x)));
+                // BigInteger bigInt = new BigInteger(tmp, 2);
+                // int intValue = bigInt.intValue();
+                // System.out.println("Look Here : "+intValue);
+                // String tmp2 = toBinaryTwoComplement(intValue);
+
                 result += signExtendBinary(tmp, 18, true);
             }
             else{
@@ -103,6 +115,7 @@ public class CPU {
 
 
 
+    
 
         switch(r){
             case 4:result+=getRegisterBinary(input[1])+getRegisterBinary(input[2])+getRegisterBinary(input[3])+"0000000000000";break;
@@ -264,33 +277,33 @@ public static String getRegisterBinary(String string){
         
         System.out.println("I am in start Running");
         String theNextInstructionToBeDecoded = "";
-        String theNextInstructionToBeExecuted = "";
-        String theNextInstructionToUseMemory = "";
-        String theNextInstructionToBeWrittenBack = "";
+        // String theNextInstructionToBeExecuted = "";
+        // String theNextInstructionToUseMemory = "";
+        // String theNextInstructionToBeWrittenBack = "";
         int decodeCounter = 0;
         int executeCounter = 0;
         int limit = 7 + ((instructionPointer-1) * 2);
         for(;clockCycle<=limit;clockCycle++){
-            if(clockCycle == 12){
-                System.out.println("safwat gad3");
+            System.out.println("\nThis marks the beginning of clock cycle: "+clockCycle);
+            System.out.println("The PC at the start of this clock cycle is: "+ RegisterFile.getRegisterFile().getPCRegister().getData());
+            if(clockCycle == 7){
+                System.out.println("Clock cycle 7, fetch of wrong instruction");
             }
           if(clockCycle % 2 == 1){
-            theNextInstructionToBeDecoded =  Stages.fetch();
-          }
-          if(clockCycle == 4){
-            System.out.println("lol");
+          theNextInstructionToBeDecoded =  Stages.fetch();
+        
           }
          if(clockCycle> 1  ){
             if(decodeCounter == 1)
                 decodeCounter = 0;
             else
             {
-                if (!(theNextInstructionToBeDecoded .equals( ""))){
+                // if (!(theNextInstructionToBeDecoded .equals( ""))){
                 Stages.decode(theNextInstructionToBeDecoded);
-                theNextInstructionToBeExecuted = theNextInstructionToBeDecoded;
-                theNextInstructionToBeDecoded ="";
+                //theNextInstructionToBeExecuted = theNextInstructionToBeDecoded;
+                //theNextInstructionToBeDecoded ="";
                 decodeCounter = 1;
-                }
+             //   }
             }
          }
          if(clockCycle > 3 ){
@@ -298,34 +311,34 @@ public static String getRegisterBinary(String string){
                 executeCounter = 0;
             else
             {
-                if(!(theNextInstructionToBeExecuted.equals(""))){
+                //if(!(theNextInstructionToBeExecuted.equals(""))){
                 Stages.execute();
-                theNextInstructionToUseMemory = theNextInstructionToBeExecuted;
-                theNextInstructionToBeExecuted = "";
+               // t// heNextInstructionToUseMemory = theNextInstructionToBeExecuted;
+                //t// heNextInstructionToBeExecuted = "";
                 executeCounter = 1;
-                }
+              //  }
             }
          }
          if(clockCycle > 5 ){
             if(clockCycle % 2 == 0)
             {
-                if(!(theNextInstructionToUseMemory.equals(""))){
+               // if(!(theNextInstructionToUseMemory.equals(""))){
                 Stages.memory();
-                theNextInstructionToBeWrittenBack = theNextInstructionToUseMemory;
-                theNextInstructionToUseMemory = "";
-                }
+              //  theNextInstructionToBeWrittenBack = theNextInstructionToUseMemory;
+              //  theNextInstructionToUseMemory = "";
+              //  }
             }
          }
          if(clockCycle > 6){
             if(clockCycle % 2 == 1)
             {
-                if(!(theNextInstructionToBeWrittenBack.equals(""))){
+              //  if(!(theNextInstructionToBeWrittenBack.equals(""))){
                 Stages.writeBack();
-                theNextInstructionToBeWrittenBack = "";
-                }
+              //  theNextInstructionToBeWrittenBack = "";
+              //  }
             }
          }
-         System.out.println("The current clock cycle is: "+clockCycle);
+         System.out.println("This marks the end of clock cycle: "+clockCycle + "\n");
         }
         //Printing the register file here
         RegisterFile.getRegisterFile().printRegisters();
