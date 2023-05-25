@@ -17,6 +17,7 @@ public class CPU {
     static  int instructionPointer;
     static Memory m;
     static int clockCycle;
+    static int limit;
 
 
     public CPU(){
@@ -282,12 +283,12 @@ public static String getRegisterBinary(String string){
         // String theNextInstructionToBeWrittenBack = "";
         int decodeCounter = 0;
         int executeCounter = 0;
-        int limit = 7 + ((instructionPointer-1) * 2);
+        limit = 7 + ((instructionPointer-1) * 2);
         for(;clockCycle<=limit;clockCycle++){
             System.out.println("\nThis marks the beginning of clock cycle: "+clockCycle);
             System.out.println("The PC at the start of this clock cycle is: "+ RegisterFile.getRegisterFile().getPCRegister().getData());
-            if(clockCycle == 7){
-                System.out.println("Clock cycle 7, fetch of wrong instruction");
+            if(clockCycle == 12){
+                System.out.println("Clock cycle 12");
             }
           if(clockCycle % 2 == 1){
           theNextInstructionToBeDecoded =  Stages.fetch();
@@ -351,6 +352,7 @@ public static String getRegisterBinary(String string){
 
 public static void executeProgram(String fileName) throws FileNotFoundException, IOException, NumberFormatException, NonExistingRegister, AddressOutOfBounds, IncorrectRegisterValue{
     readFile(fileName);
+    limit = 0;
     startRunning();
 
 }

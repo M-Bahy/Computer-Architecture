@@ -34,7 +34,7 @@ public int getData() {
 }
 
 
-
+/// Ezyk ya omar ya adel
 public void setData(int data) throws AddressOutOfBounds, IncorrectRegisterValue {
     if(this instanceof PCRegister){
         if(data < 0 || data > 1024){
@@ -46,12 +46,8 @@ public void setData(int data) throws AddressOutOfBounds, IncorrectRegisterValue 
         }
     }
     else{
-        if(data < -2147483648 || data > 2147483647){
-            throw new IncorrectRegisterValue();
-        }
-        else{
-            this.data = data;
-        }
+       
+        this.data = data;
     }
     
 

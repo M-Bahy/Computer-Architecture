@@ -55,7 +55,7 @@ public class RegisterFile {
         for (int i = 0; i < registerFile.registers.length; i++) {
             System.out.println(registerFile.registers[i].getName() + " = " + registerFile.registers[i].getData());
         }
-        System.out.println("PC = " + registerFile.pc.getData());
+        System.out.println("PC = " + registerFile.pc.getData() + "\n");
     }
 
 

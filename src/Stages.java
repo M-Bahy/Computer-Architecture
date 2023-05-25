@@ -55,9 +55,10 @@ public class Stages
     {
         if(RegisterFile.getRegisterFile().getPCRegister().getData() == 1024 || CPU.m.memory[RegisterFile.getRegisterFile().getPCRegister().getData()] == null)
             return "";
-        CPU.m.printMemory();
+        //CPU.m.printMemory();
         instruction = CPU.m.memory[RegisterFile.getRegisterFile().getPCRegister().getData()];
         RegisterFile.getRegisterFile().getPCRegister().incrementPC();
+        System.out.println("The input to the fetch stage is the PC register: " + RegisterFile.getRegisterFile().getPCRegister().getData());
         System.out.println("The current instruction being fetched is: "+ instruction);
         return instruction;
     }
@@ -84,6 +85,7 @@ public class Stages
         DXEX.add(shamt);
         DXEX.add(imm);
         DXEX.add(jumpAddress);
+        DXEX.add(RegisterFile.getRegisterFile().getPCRegister().getData()+"");
         // DXEX.add(r1+"");
         // DXEX.add(r2+"");
         // DXEX.add(r3+"");
@@ -95,6 +97,7 @@ public class Stages
     {
         if(DXEX.isEmpty())
             return;
+
         String opcode = DXEX.remove();
         String r1Address = DXEX.remove();
         String r2Address = DXEX.remove();
@@ -102,12 +105,34 @@ public class Stages
         String shamt = DXEX.remove();
         String imm = DXEX.remove();
         String jumpAddress = DXEX.remove();
+        int oldPC = Integer.parseInt(DXEX.remove());
         // int r1 = Integer.parseInt(DXEX.remove());
         // int r2 = Integer.parseInt(DXEX.remove());
         // int r3 = Integer.parseInt(DXEX.remove());
         int r1 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r1Address,2)).getData();
         int r2 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r2Address,2)).getData();
         int r3 = RegisterFile.getRegisterFile().getRegister(Integer.parseInt(r3Address,2)).getData();
+       
+
+
+        String s = "Input to Execute Stage: ";
+        s+= "opcode: "+opcode+", ";
+        s+= "r1Address: "+r1Address+", ";
+        s+= "r2Address: "+r2Address+", ";
+        s+= "r3Address: "+r3Address+", ";
+        s+= "shamt: "+shamt+", ";
+        s+= "imm: "+imm+", ";
+        s+= "jumpAddress: "+jumpAddress+", ";
+        s+= "oldPC: "+oldPC+", ";
+        s+= "r1: "+r1+", ";
+        s+= "r2: "+r2+", ";
+        s+= "r3: "+r3+", ";  
+
+
+        System.out.println(s);
+
+
+
         int resultant = 0;
         int loadStoreFlag = 0;
         int memoryAddress = 0;
@@ -162,8 +187,40 @@ public class Stages
                 break;
 
             case 4: //Jump if equal: IF(R1 == R2) {PC = PC+1+IMM }
-                if(r1 == r2)
-                    RegisterFile.getRegisterFile().getPCRegister().setData(RegisterFile.getRegisterFile().getPCRegister().getData() + 1 + Integer.parseInt(imm,2));
+                if(r1 == r2){
+
+                   c = imm.charAt(0);
+                  n = 0;
+                if(c == '1'){
+            
+                int len = imm.length();
+                
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < len; i++) { 
+                     c = imm.charAt(i);
+                   char f = c == '0' ? '1' : '0'; 
+                  sb.append(f);
+                  n = Integer.parseInt(sb.toString(), 2);
+                  n= n+1;
+                }
+                
+               // System.out.println("The output : "+n);
+                }
+                resultant = n == 0? Integer.parseInt(imm,2) : n*-1;
+
+              
+        
+               
+                int newPC = oldPC + 1 +resultant-2;
+                  System.out.println("OLD PC: "+oldPC);
+                  System.out.println("New PC: "+newPC);
+                RegisterFile.getRegisterFile().getPCRegister().setData(newPC);
+                DXEX.clear();
+                if(resultant < 0)
+                    CPU.limit += 7 + (((oldPC - newPC)-1) * 2);
+
+
+                }
                 writeBackFlag = false;
                 System.out.println("The current instruction being executed is JUMP IF EQUAL: if(R" + Integer.parseInt(r1Address,2) + " == R" +Integer.parseInt(r2Address,2) + ") {PC = PC + 1 + IMM}"); 
                 break;
@@ -308,6 +365,12 @@ public class Stages
     public static void memory()
     
     {
+
+
+
+
+
+
         if(EXMEM.isEmpty())
             return;
         int r1Address = Integer.parseInt(EXMEM.remove(),2);
@@ -317,6 +380,22 @@ public class Stages
          int toBeStored = Integer.parseInt(EXMEM.remove());
         int memoryAddress = Integer.parseInt(EXMEM.remove());
         int loadStoreFlag = Integer.parseInt(EXMEM.remove());
+
+        String s = "Input to Memory Stage: ";
+        s += "r1Address: " + r1Address + ", ";
+        s += "r2Address: " + r2Address + ", ";
+        s += "Resultant: " + resultant + ", ";
+        s += "WriteBackFlag: " + writeBackFlag + ", ";
+        s += "ToBeStored: " + toBeStored + ", ";
+        s += "MemoryAddress: " + memoryAddress + ", ";
+        s += "LoadStoreFlag: " + loadStoreFlag + ", ";
+        System.out.println(s);
+
+
+
+
+
+
         if(loadStoreFlag == -1)
         {
             //flag is true, this memory operation is a load
@@ -348,6 +427,15 @@ public class Stages
         int r1Address = Integer.parseInt(MEMWB.remove());
         int resultant = Integer.parseInt(MEMWB.remove());
         boolean flag = Boolean.parseBoolean(MEMWB.remove());
+
+
+
+       String s ="Input to WriteBack Stage: ";
+        s += " r1Address: " + r1Address + ", ";
+        s += "Resultant: " + resultant + ", ";
+        s += "WriteBackFlag: " + flag + ", ";
+        System.out.println(s);
+
 
         if(flag)
         {
