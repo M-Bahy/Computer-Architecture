@@ -1,5 +1,6 @@
 package src.RegisterFile;
 
+import src.CPU;
 import src.Exceptions.NonExistingRegister;
 
 public class RegisterFile {
@@ -54,8 +55,10 @@ public class RegisterFile {
         System.out.println("Registers:");
         for (int i = 0; i < registerFile.registers.length; i++) {
             System.out.println(registerFile.registers[i].getName() + " = " + registerFile.registers[i].getData());
+            CPU.s+=(registerFile.registers[i].getName() + " = " + registerFile.registers[i].getData()+"\n");
         }
         System.out.println("PC = " + registerFile.pc.getData() + "\n");
+        CPU.s+=("PC = " + registerFile.pc.getData() + "\n");
     }
 
 

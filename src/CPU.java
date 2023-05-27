@@ -19,11 +19,13 @@ public class CPU {
     static int clockCycle;
     static int limit;
 
+    public static String s;
 
     public CPU(){
         instructionPointer = 0;
          m= new Memory();
        clockCycle = 1;
+       s = "";
     }
 
     public static  void readFile(String program) throws FileNotFoundException , IOException, AddressOutOfBounds {
@@ -36,6 +38,7 @@ public class CPU {
             input=line.split(" ");
             convertToBinary(input);
            System.out.println(Arrays.toString(input));
+           CPU.s+=(Arrays.toString(input)+"\n");
         }
     }
 
@@ -286,7 +289,11 @@ public static String getRegisterBinary(String string){
         limit = 7 + ((instructionPointer-1) * 2);
         for(;clockCycle<=limit;clockCycle++){
             System.out.println("\nThis marks the beginning of clock cycle: "+clockCycle);
-            System.out.println("The PC at the start of this clock cycle is: "+ RegisterFile.getRegisterFile().getPCRegister().getData());
+            
+            s+="\nThis marks the beginning of clock cycle: "+clockCycle+"\n";
+           System.out.println("The PC at the start of this clock cycle is: "+ RegisterFile.getRegisterFile().getPCRegister().getData());
+            s+="The PC at the start of this clock cycle is: "+ RegisterFile.getRegisterFile().getPCRegister().getData()+"\n";
+
             if(clockCycle == 12){
                 System.out.println("Clock cycle 12");
             }
@@ -339,7 +346,8 @@ public static String getRegisterBinary(String string){
               //  }
             }
          }
-         System.out.println("This marks the end of clock cycle: "+clockCycle + "\n");
+         System.out.println("This marks the end of clock cycle: "+clockCycle );
+        s+="This marks the end of clock cycle: "+clockCycle + "\n";
         }
         //Printing the register file here
         RegisterFile.getRegisterFile().printRegisters();
@@ -394,8 +402,8 @@ public static void main(String[]args) throws FileNotFoundException, IOException,
 
 // long x =5 ;
 // int y = (int)x;
-CPU c = new CPU();
-c.executeProgram("theFile.txt");
+// CPU c = new CPU();
+// c.executeProgram("theFile.txt");
 
 // Register R = RegisterFile.getRegisterFile().getRegister(1);
 // R.setData(25);

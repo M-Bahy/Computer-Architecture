@@ -59,7 +59,9 @@ public class Stages
         instruction = CPU.m.memory[RegisterFile.getRegisterFile().getPCRegister().getData()];
         RegisterFile.getRegisterFile().getPCRegister().incrementPC();
         System.out.println("The input to the fetch stage is the PC register: " + RegisterFile.getRegisterFile().getPCRegister().getData());
+        CPU.s+="The input to the fetch stage is the PC register: " + RegisterFile.getRegisterFile().getPCRegister().getData()+"\n";
         System.out.println("The current instruction being fetched is: "+ instruction);
+        CPU.s +="The current instruction being fetched is: "+ instruction+"\n";
         return instruction;
     }
     
@@ -67,7 +69,9 @@ public class Stages
     {
         if(instruction.equals(""))
             return;
+
         System.out.println("The current instruction being decoded is: "+ instruction);
+        CPU.s += "The current instruction being decoded is: "+ instruction+"\n";
         String opcode = instruction.substring(0, 4);
         String r1Address = instruction.substring(4, 9);
         String r2Address = instruction.substring(9, 14);
@@ -130,6 +134,7 @@ public class Stages
 
 
         System.out.println(s);
+        CPU.s+=s+"\n";
 
 
 
@@ -147,25 +152,28 @@ public class Stages
                 resultant = r2 + r3;
                 writeBackFlag = true;
                 System.out.println("The current instruction being executed is ADD: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " + R" + Integer.parseInt(r3Address,2));
+                CPU.s+="The current instruction being executed is ADD: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " + R" + Integer.parseInt(r3Address,2)+"\n";
                 break;
 
             case 1: //Sub: R1 = R2-R3
                 resultant = r2 - r3;
                 writeBackFlag = true;
-                System.out.println("The current instruction being executed is SUB: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " - R" + Integer.parseInt(r3Address,2));
+               System.out.println("The current instruction being executed is SUB: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " - R" + Integer.parseInt(r3Address,2));
+                CPU.s += "The current instruction being executed is SUB: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " - R" + Integer.parseInt(r3Address,2)+"\n";
                 break;
 
             case 2: //Mul: R1 = R2*R3
                 resultant = r2 * r3;
                 writeBackFlag = true;
-                System.out.println("The current instruction being executed is MUL: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " * R" + Integer.parseInt(r3Address,2));
+              System.out.println("The current instruction being executed is MUL: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " * R" + Integer.parseInt(r3Address,2));
+              CPU.s += "The current instruction being executed is MUL: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " * R" + Integer.parseInt(r3Address,2)+"\n";
                 break;
 
             case 3: //Movi: R1 = IMM (R2 will be 0)
                 
                 writeBackFlag = true;
-                System.out.println("The current instruction being executed is MOVI: R" + Integer.parseInt(r1Address,2) + " = IMM");
-
+               System.out.println("The current instruction being executed is MOVI: R" + Integer.parseInt(r1Address,2) + " = IMM");
+                 CPU.s += "The current instruction being executed is MOVI: R" + Integer.parseInt(r1Address,2) + " = IMM"+"\n";
                 char c = imm.charAt(0);
                 int  n = 0;
                 if(c == '1'){
@@ -184,6 +192,7 @@ public class Stages
                // System.out.println("The output : "+n);
                 }
                 resultant = n == 0? Integer.parseInt(imm,2) : n*-1;
+                
                 break;
 
             case 4: //Jump if equal: IF(R1 == R2) {PC = PC+1+IMM }
@@ -222,13 +231,15 @@ public class Stages
 
                 }
                 writeBackFlag = false;
-                System.out.println("The current instruction being executed is JUMP IF EQUAL: if(R" + Integer.parseInt(r1Address,2) + " == R" +Integer.parseInt(r2Address,2) + ") {PC = PC + 1 + IMM}"); 
+               System.out.println("The current instruction being executed is JUMP IF EQUAL: if(R" + Integer.parseInt(r1Address,2) + " == R" +Integer.parseInt(r2Address,2) + ") {PC = PC + 1 + IMM}"); 
+               CPU.s += "The current instruction being executed is JUMP IF EQUAL: if(R" + Integer.parseInt(r1Address,2) + " == R" +Integer.parseInt(r2Address,2) + ") {PC = PC + 1 + IMM}"+"\n";
                 break;
 
             case 5: //AND: R1 = R2 & R3
                 resultant = r2 & r3;
                 writeBackFlag = true;
                 System.out.println("The current instruction being executed is AND: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " & R" + Integer.parseInt(r3Address,2));
+                CPU.s += "The current instruction being executed is AND: R" + Integer.parseInt(r1Address,2) + " = " + "R"+ Integer.parseInt(r2Address,2) + " & R" + Integer.parseInt(r3Address,2)+"\n";
                 break;
 
             case 6: //XORi: R1 = R2 XOR IMM
@@ -257,6 +268,7 @@ public class Stages
                 resultant = r2 ^ resultant;
                 writeBackFlag = true;
                 System.out.println("The current instruction being executed is XORi: R" +Integer.parseInt(r1Address) + " = " + "R"+ Integer.parseInt(r2Address) + " XOR IMM");
+                CPU.s += "The current instruction being executed is XORi: R" +Integer.parseInt(r1Address) + " = " + "R"+ Integer.parseInt(r2Address) + " XOR IMM"+"\n";
                 break;
 
             case 7: //Jump: PC = PC[31:28] || ADDRESS
@@ -269,18 +281,21 @@ public class Stages
                 writeBackFlag = false;
                 DXEX.clear();
                 System.out.println("The current instruction being executed is JUMP: PC = PC[31:28] || ADDRESS");
+                CPU.s += "The current instruction being executed is JUMP: PC = PC[31:28] || ADDRESS"+"\n";
                 break;
 
             case 8: //Shift left: R1 = R2 << SHAMT
                 resultant = r2 << Integer.parseInt(shamt,2);
                 writeBackFlag = true;
-                System.out.println("The current instruction being executed is SHIFT LEFT: R" + Integer.parseInt(r1Address)  + " = " + "R"+ Integer.parseInt(r2Address) + " << SHAMT");
+               System.out.println("The current instruction being executed is SHIFT LEFT: R" + Integer.parseInt(r1Address)  + " = " + "R"+ Integer.parseInt(r2Address) + " << SHAMT");
+                CPU.s += "The current instruction being executed is SHIFT LEFT: R" + Integer.parseInt(r1Address)  + " = " + "R"+ Integer.parseInt(r2Address) + " << SHAMT"+"\n";
                 break;
 
             case 9: //Shift right: R1 = R2 >>> SHAMT
                 resultant = r2 >> Integer.parseInt(shamt,2);
                 writeBackFlag = true;
                 System.out.println("The current instruction being executed is SHIFT RIGHT: R" + Integer.parseInt(r1Address)  + " = " + "R"+ Integer.parseInt(r2Address) + " >>> SHAMT");
+                CPU.s += "The current instruction being executed is SHIFT RIGHT: R" + Integer.parseInt(r1Address)  + " = " + "R"+ Integer.parseInt(r2Address) + " >>> SHAMT"+" \n";
                 break;
 
             case 10: //Move to register: R1 = MEM[R2 + IMM]
@@ -308,7 +323,8 @@ public class Stages
                 toBeStored = -1;
                 loadStoreFlag = -1;
                 writeBackFlag = true;
-                System.out.println("The current instruction being executed is LOAD: R" + Integer.parseInt(r1Address) + " = MEM[" + "R"+Integer.parseInt(r2Address) + " + IMM]");
+               System.out.println("The current instruction being executed is LOAD: R" + Integer.parseInt(r1Address) + " = MEM[" + "R"+Integer.parseInt(r2Address) + " + IMM]");
+               s+= "The current instruction being executed is LOAD: R" + Integer.parseInt(r1Address) + " = MEM[" + "R"+Integer.parseInt(r2Address) + " + IMM]"+"\n";
                 break;
 
             case 11: //Move to memory: MEM[R2 + IMM] = R1
@@ -348,6 +364,7 @@ public class Stages
                 loadStoreFlag = 1;
                 writeBackFlag = false;
                 System.out.println("The current instruction being executed is STORE: MEM[R" + Integer.parseInt(r2Address) + " + IMM] = " + "R"+ Integer.parseInt(r1Address));
+                s+= "The current instruction being executed is STORE: MEM[R" + Integer.parseInt(r2Address) + " + IMM] = " + "R"+ Integer.parseInt(r1Address)+"\n";
                 break;
         }
         EXMEM.add(r1Address);
@@ -389,9 +406,10 @@ public class Stages
         s += "ToBeStored: " + toBeStored + ", ";
         s += "MemoryAddress: " + memoryAddress + ", ";
         s += "LoadStoreFlag: " + loadStoreFlag + ", ";
-        System.out.println(s);
+        //System.out.println(s);
 
 
+        CPU.s+=s;
 
 
 
@@ -404,14 +422,17 @@ public class Stages
         
 
             resultant =  Integer.parseInt(CPU.m.memory[memoryAddress]);
-            System.out.println("The current instruction being executed is LOAD: R" + r1Address + " = MEM[" + "R"+ r2Address + " + IMM]");
+           System.out.println("The current instruction being executed is LOAD: R" + r1Address + " = MEM[" + "R"+ r2Address + " + IMM]");
+           CPU.s+= "The current instruction being executed is LOAD: R" + r1Address + " = MEM[" + "R"+ r2Address + " + IMM]"+"\n";
         }
         else if(loadStoreFlag == 1)
         {
             String  oldValue = CPU.m.memory[memoryAddress];
             CPU.m.memory[memoryAddress] = toBeStored+"";
-            System.out.println("The current instruction being executed is STORE: MEM[R" + r2Address + " + IMM] = " + "R"+ r1Address);
-            System.out.println("The value of data memory location " + memoryAddress + " has been changed from " + oldValue + " to " + toBeStored);
+           System.out.println("The current instruction being executed is STORE: MEM[R" + r2Address + " + IMM] = " + "R"+ r1Address);
+           System.out.println("The value of data memory location " + memoryAddress + " has been changed from " + oldValue + " to " + toBeStored);
+            CPU.s+= "The current instruction being executed is STORE: MEM[R" + r2Address + " + IMM] = " + "R"+ r1Address+"\n";
+            CPU.s+= "The value of data memory location " + memoryAddress + " has been changed from " + oldValue + " to " + toBeStored+"\n";
         }
         MEMWB.add(r1Address+"");
         MEMWB.add(resultant+"");
@@ -434,14 +455,16 @@ public class Stages
         s += " r1Address: " + r1Address + ", ";
         s += "Resultant: " + resultant + ", ";
         s += "WriteBackFlag: " + flag + ", ";
-        System.out.println(s);
+        //System.out.println(s);
 
+        CPU.s+=s;
 
         if(flag)
         {
          int oldValue = RegisterFile.getRegisterFile().getRegister(r1Address).getData();
            RegisterFile.getRegisterFile().getRegister(r1Address).setData(resultant);
-           System.out.println("The value of register " + "R"+r1Address + " has been changed from " + oldValue + " to " + resultant);
+          System.out.println("The value of register " + "R"+r1Address + " has been changed from " + oldValue + " to " + resultant);
+          CPU.s+= "The value of register " + "R"+r1Address + " has been changed from " + oldValue + " to " + resultant+"\n";
         }
         //System.out.println("I am in write back method testing "+RegisterFile.getRegisterFile().getRegister(1).getData());
     }
